@@ -1,0 +1,15 @@
+# Dependências do Node (NUNCA subir para o GitHub)
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Configurações locais e senhas do banco (Segurança!)
+.env
+.env.local
+
+# Arquivos do VS Code e editores
+.vscode/
+.DS_Store
+Thumbs.db
