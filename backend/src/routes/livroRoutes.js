@@ -1,12 +1,13 @@
-import express from "express";
+import { Router } from "express";
 import livroController from "../controllers/livroController.js";
+import validateLivro from "../middlewares/livroMiddleware.js";
 
-const routeLivro = express.Router();
+const router = Router();
 
-routeLivro.get("/", livroController.showLivro);
-routeLivro.get("/:id", livroController.getLivroById);
-routeLivro.post("/", livroController.createLivro);
-routeLivro.put("/:id", livroController.updateLivro);
-routeLivro.delete("/:id", livroController.deleteLivro);
+router.get("/", livroController.showLivro);
+router.get("/:id", livroController.getLivroById);
+router.post("/", validateLivro, livroController.createLivro);
+router.put("/:id", validateLivro, livroController.updateLivro);
+router.delete("/:id", livroController.deleteLivro);
 
-export default routeLivro;
+export default router;

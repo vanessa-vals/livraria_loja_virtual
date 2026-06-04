@@ -1,12 +1,13 @@
-import express from "express";
+import { Router } from "express";
 import categoriaController from "../controllers/categoriaController.js";
+import validateCategoria from "../middlewares/categoriaMiddleware.js";
 
-const routeCategoria = express.Router();
+const router = Router();
 
-routeCategoria.get("/", categoriaController.showCategoria);
-routeCategoria.get("/:id", categoriaController.getCategoriaById);
-routeCategoria.post("/", categoriaController.createCategoria);
-routeCategoria.put("/:id", categoriaController.updateCategoria);
-routeCategoria.delete("/:id", categoriaController.deleteCategoria);
+router.get("/",        categoriaController.showCategoria);
+router.get("/:id",     categoriaController.getCategoriaById);
+router.post("/",      validateCategoria,  categoriaController.createCategoria);
+router.put("/:id",    validateCategoria,  categoriaController.updateCategoria);
+router.delete("/:id",  categoriaController.deleteCategoria);
 
-export default routeCategoria;
+export default router;  

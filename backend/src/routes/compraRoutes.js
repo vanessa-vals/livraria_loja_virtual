@@ -1,12 +1,13 @@
-import express from "express";
+import { Router } from "express";
 import compraController from "../controllers/compraController.js";
+import validateCompra from "../middlewares/compraMiddleware.js";
 
-const routeCompra = express.Router();
+const router = Router();
 
-routeCompra.get("/", compraController.showCompra);
-routeCompra.get("/:id", compraController.getCompraById);
-routeCompra.post("/", compraController.createCompra);
-routeCompra.put("/:id", compraController.updateCompra);
-routeCompra.delete("/:id", compraController.deleteCompra);
+router.get("/",        compraController.showCompra);
+router.get("/:id",     compraController.getCompraById);
+router.post("/",      validateCompra,  compraController.createCompra);
+router.put("/:id",    validateCompra,  compraController.updateCompra);
+router.delete("/:id",  compraController.deleteCompra);
 
-export default routeCompra;
+export default router;

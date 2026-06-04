@@ -1,12 +1,13 @@
-import express from "express";
+import { Router } from "express";
 import editoraController from "../controllers/editoraController.js";
+import validateEditora from "../middlewares/editoraMiddleware.js";
 
-const routeEditora = express.Router();
+const router = Router();
 
-routeEditora.get("/", editoraController.showEditora);
-routeEditora.get("/:id", editoraController.getEditoraById);
-routeEditora.post("/", editoraController.createEditora);
-routeEditora.put("/:id", editoraController.updateEditora);
-routeEditora.delete("/:id", editoraController.deleteEditora);
+router.get("/",        editoraController.showEditora);
+router.get("/:id",     editoraController.getEditoraById);
+router.post("/",      validateEditora,  editoraController.createEditora);
+router.put("/:id",    validateEditora,  editoraController.updateEditora);
+router.delete("/:id",  editoraController.deleteEditora);
 
-export default routeEditora;
+export default router;
