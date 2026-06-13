@@ -8,7 +8,7 @@ import routeEditora from "./src/routes/editoraRoutes.js";
 import routeLivro from "./src/routes/livroRoutes.js";
 
 const app = express();
-const PORT = process.env.PORT_SERVER || 3000;
+const PORT = process.env.PORT_SERVER || 3006;
 
 app.use(cors());
 app.use(express.json());

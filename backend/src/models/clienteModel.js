@@ -13,11 +13,10 @@ class ClienteModel {
     );
     return rows[0];
   }
-  async getClienteByEmail(email) {
-    console.log("emailModel", email);
+  async getClienteByEmail(email, id = 0) {
     const [rows] = await pool.execute(
-      "Select * From clientes where email = ?;",
-      [email],
+      "Select * From clientes where email = ? AND id_cliente !=?;",
+      [email, id],
     );
     return rows;
   }
