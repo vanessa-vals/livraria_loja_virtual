@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import clienteModel from "../models/clienteModel.js";
+// IMPORTANTE: Se for usar o userModel aqui, ele precisa ser importado:
+// import userModel from "../models/userModel.js"; 
 
 class ClienteController {
   async showCliente(req, res) {
@@ -31,7 +33,7 @@ class ClienteController {
   }
 
   async createCliente(req, res) {
-    // try {
+    try { // Try/Catch reativado para segurança
       const { nome, email, telefone, cidade, estado } = req.body;
 
       if (!nome || !email || !telefone || !cidade || !estado) {
@@ -40,21 +42,16 @@ class ClienteController {
           .json({ message: "Todos os campos são obrigatórios" });
       }
 
-      const [findEmail] = await clienteModel.getClienteByEmail(email) ;
+      const [findEmail] = await clienteModel.getClienteByEmail(email);
       if (findEmail) {
         return res.status(400).json({ message: "Email já cadastrado!" });
       }
 
-      const hashedPassword = await bcrypt.hash(user_password, 10);
-      
-      const newUser = await userModel.insertUser({
-        user_name,
-        user_email,
-        user_password: hashedPassword,
-        user_phone,
-        role_id,
-        user_status,
-      })
+      /* NOTA: Se você precisar criar um User vinculado ao Cliente, 
+        as variáveis do usuário precisam vir do req.body também.
+        Removi o bloco quebrado daqui. Se for reativar, certifique-se de receber os campos:
+        const { user_name, user_email, user_password, ... } = req.body;
+      */
 
       const createCliente = await clienteModel.createCliente(req.body);
 
@@ -67,9 +64,9 @@ class ClienteController {
       return res
         .status(201)
         .json({ message: "Cliente cadastrado com sucesso!" });
-    // } catch (error) {
-    //   return res.status(500).json({ errorcadastro: error.message });
-    // }
+    } catch (error) {
+      return res.status(500).json({ errorcadastro: error.message });
+    }
   }
 
   async updateCliente(req, res) {
@@ -83,8 +80,8 @@ class ClienteController {
           .json({ message: "Todos os campos são obrigatórios" });
       }
 
-      const [findEmail] = await clienteModel.getClienteByEmail(email) ;
-      if (findEmail?.email === email) {
+      const [findEmail] = await clienteModel.getClienteByEmail(email);
+      if (findEmail && findEmail.id !== id) { // Ajustado para evitar colisão com o próprio email do cliente atual
         return res.status(400).json({ message: "Email já cadastrado!" });
       }
 
@@ -98,7 +95,7 @@ class ClienteController {
 
       return res
         .status(200)
-        .json({ message: "Cliente atualizado com sucesso!" });
+        .json({ message: "Cliente updated com sucesso!" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -120,123 +117,7 @@ class ClienteController {
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
-      async this.updateCliente(req, res){
-       try{
-        const {user_id} = req.params;
-
-        const{
-          user_name,
-        user_email,
-        user_password: hashedPassword,
-        user_phone,
-        role_id,
-        user_status,
-
-        }
-      }
-    }
   }
 }
 
-import bcrypt from "bcrypt";
-import pool from "../database/database.js";
-
-class UserModel {
-  async selectAllUsers() {
-    const query = `SELECT * FROM users`;
-
-    const [rows] = await pool.execute(query);
-    return rows;
-  }
-
-  async selectUserById(id) {
-    const query = `SELECT * FROM users WHERE user_id = ?`;
-
-    const [rows] = await pool.execute(query, [id]);
-    return rows;
-  }
-
-  async selectUserByEmail(email, id = 0) {
-    const query = `SELECT * FROM 
-        users WHERE user_email = ? AND user_id != ?;`;
-
-    const [row] = await pool.execute(query, [email, id]);
-
-    return row;
-  }
-
-  async insertUser(user) {
-    const {
-      user_name,
-      user_email,
-      user_password,
-      user_phone,
-      role_id,
-      user_status,
-    } = user;
-
-      const hashedPassword = await bcrypt.hash(user_password, 10);
-
-
-    const query = `INSERT INTO users
-        (user_name, user_email, user_password, user_phone, role_id, user_status)
-    VALUES
-        (?, ?, ?, ?, ?, ?)`;
-
-    const [result] = await pool.execute(query, [
-      user_name,
-      user_email,
-      user_password,
-      user_phone,
-      role_id,
-      user_status,
-    ]);
-
-    return result;
-  }
-
-  async updateUser(id, user) {
-    const {
-      user_name,
-      user_email,
-      user_password,
-      user_phone,
-      role_id,
-      user_status,
-    } = user;
-
-    const query = `
-        UPDATE users
-        SET
-            user_name = ?,
-            user_email = ?,
-            user_password = ?,
-            user_phone = ?,
-            role_id = ?,
-            user_status = ?
-        WHERE user_id = ?
-    `;
-
-    const [result] = await pool.execute(query, [
-      user_name,
-      user_email,
-      user_password,
-      user_phone,
-      role_id,
-      user_status,
-      id,
-    ]);
-
-    return result;
-  }
-
-  async deleteUser(id) {
-    const query = `DELETE FROM users WHERE user_id = ?;`;
-
-    const [result] = await pool.execute(query, [id]);
-
-    return result;
-  }
-}
-
-export default new UserModel();
+export default new ClienteController();
